@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
-
+const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+
+dotenv.config();
 
 // MongoDB connection
 mongoose.connect(
-  'mongodb+srv://vivek:nodeauth@cluster0-fbgxx.mongodb.net/test?retryWrites=true&w=majority',
+  process.env.DB_CONNECT,
   { useNewUrlParser: true, useUnifiedTopology: true },
   () => {
     console.log('Connected to DB');
