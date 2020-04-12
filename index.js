@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
 
-const router = express.Router();
-
+// Import routes
 const authRoute = require('./routes/auth');
+
+// Route middlewares
 app.use('/api/user', authRoute);
 
 const port = 3000;
