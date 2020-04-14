@@ -1,13 +1,16 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-const { validateRegistration } = require('../validation');
+const {
+  validateRegistrationData,
+  validateLoginData,
+} = require('../validation');
 
 // Import User Model
 const User = require('../models/User');
 
 router.post('/register', async (req, res) => {
   // Registration Data Validation
-  const { error } = validateRegistration(req.body);
+  const { error } = validateRegistrationData(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
   }
@@ -34,6 +37,31 @@ router.post('/register', async (req, res) => {
   } catch (err) {
     res.status(400).send(err);
   }
+});
+
+router.post('/login', async (req, res) => {
+  // Login Data Validation
+  const { error } = validateLoginData(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  // Check if email exists
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(400).send('Email not found!');
+  }
+
+  // Decrypt and compare with the entered password
+  const isPasswordValid = await bcrypt.compare(
+    req.body.password,
+    user.password
+  );
+  if (!isPasswordValid) {
+    return res.status(400).send('Email or password is incorrect!');
+  }
+
+  res.send('You are logged in successfully!');
 });
 
 module.exports = router;
